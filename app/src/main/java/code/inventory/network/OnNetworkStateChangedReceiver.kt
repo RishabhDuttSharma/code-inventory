@@ -20,12 +20,12 @@ import code.inventory.FilteredBroadcastReceiver
  * <p/>
  * Dated: 4/25/2018.
  */
-class OnNetworkStateChangedReceiver(private val listener: Listener) : FilteredBroadcastReceiver() {
+class OnNetworkStateChangedReceiver(private val listener: Listener?) : FilteredBroadcastReceiver() {
 
     override fun getAction() = CONNECTIVITY_ACTION
 
     override fun onFilteredReceive(context: Context?, intent: Intent) {
-        listener.onNetworkStateChanged(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+        listener?.onNetworkStateChanged(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
     }
 
     /**

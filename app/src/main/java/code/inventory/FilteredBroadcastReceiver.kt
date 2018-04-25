@@ -11,8 +11,17 @@ import android.content.IntentFilter
  */
 abstract class FilteredBroadcastReceiver : BroadcastReceiver() {
 
+    /**
+     * @return Define the ACTION for receiving & filtration of required Broadcasts
+     */
     abstract fun getAction(): String
 
+    /**
+     * Called when a Broadcast is received with given ACTION (specified by [getAction()])
+     *
+     * @param context
+     * @param intent
+     */
     abstract fun onFilteredReceive(context: Context?, intent: Intent)
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -20,9 +29,16 @@ abstract class FilteredBroadcastReceiver : BroadcastReceiver() {
     }
 
     /**
-     * Call this method to get this instance registered through [context] with appropriate [ACTION]
+     * Call this method to get this instance registered through [context] with appropriate ACTION
      *
      * @param context
      */
-    fun register(context: Context) = context.registerReceiver(this, IntentFilter(getAction()))
+    fun register(context: Context): Intent = context.registerReceiver(this, IntentFilter(getAction()))
+
+    /**
+     * Call this method to get this instance unregistered from [context]
+     *
+     * @param context
+     */
+    fun unregister(context: Context) = context.unregisterReceiver(this)
 }
