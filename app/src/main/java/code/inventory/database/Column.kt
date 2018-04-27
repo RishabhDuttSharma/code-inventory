@@ -2,6 +2,7 @@ package code.inventory.database
 
 import android.text.TextUtils
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Developer: Rishabh Dutt Sharma
@@ -10,7 +11,6 @@ import java.util.*
 object Column {
 
     enum class Constraint(val value: String) {
-
         AUTO_INCREMENT("AUTO INCREMENT"),
         PRIMARY_KEY("PRIMARY KEY")
     }
@@ -23,7 +23,7 @@ object Column {
         BLOB("BLOB")
     }
 
-    data class Data(private val columnName: String,
+    data class Data(val columnName: String,
                     private val columnDataType: String,
                     private val constraints: String) {
         override fun toString() = "$columnName $columnDataType $constraints"
@@ -39,6 +39,10 @@ object Column {
             add(Data(columnName, columnDataType, constraints))
         }
 
-        fun prepareColumnsInfo(): String = TextUtils.join(", ", this)
+        fun asProjection(): Array<String> = this.flatMapTo(ArrayList(), { (columnName) ->
+            kotlin.collections.listOf(columnName)
+        }).toArray(arrayOfNulls<String>(size))
+
+        override fun toString(): String = TextUtils.join(", ", this)
     }
 }

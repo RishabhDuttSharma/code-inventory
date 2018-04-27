@@ -3,6 +3,7 @@ package code.inventory.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import code.inventory.database.table.TableConfiguration
 
 /**
  * Developer: Rishabh Dutt Sharma
@@ -11,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper
 abstract class DatabaseHelper(context: Context, databaseName: String, databaseVersion: Int)
     : SQLiteOpenHelper(context, databaseName, null, databaseVersion) {
 
-    private val tableConfigurations: List<Table.Configuration> = arrayListOf()
+    private val tableConfigurations: List<TableConfiguration> = arrayListOf()
 
     override fun onCreate(db: SQLiteDatabase?) {
         for (tableConfiguration in tableConfigurations)
@@ -21,6 +22,7 @@ abstract class DatabaseHelper(context: Context, databaseName: String, databaseVe
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         for (tableConfiguration in tableConfigurations)
             db?.execSQL(QueryBuilder.dropTable(tableConfiguration))
+        onCreate(db)
     }
 }
 
