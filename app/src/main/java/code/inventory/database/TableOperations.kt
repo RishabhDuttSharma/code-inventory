@@ -1,4 +1,4 @@
-package code.inventory.database.table
+package code.inventory.database
 
 /**
  * Developer: Rishabh Dutt Sharma

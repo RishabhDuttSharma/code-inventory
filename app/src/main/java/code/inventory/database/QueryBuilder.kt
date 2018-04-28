@@ -1,7 +1,5 @@
 package code.inventory.database
 
-import code.inventory.database.table.TableConfiguration
-
 /**
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/26/2018.

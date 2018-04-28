@@ -1,4 +1,4 @@
-package code.inventory.database.table
+package code.inventory.database
 
 import code.inventory.database.Column
 

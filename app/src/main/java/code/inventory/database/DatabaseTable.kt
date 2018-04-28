@@ -1,7 +1,6 @@
-package code.inventory.database.table
+package code.inventory.database
 
 import android.database.sqlite.SQLiteDatabase
-import code.inventory.database.DatabaseHelper
 
 /**
  * Developer: Rishabh Dutt Sharma
@@ -19,7 +18,8 @@ abstract class DatabaseTable<T>(private val databaseHelper: DatabaseHelper) : Ta
         val database = databaseHelper.readableDatabase
 
         val configuration = getConfiguration()
-        val cursor = database.query(configuration.getTableName(), configuration.getColumns().asProjection(), selection, selectionArgs, null, null, null)
+        val cursor = database.query(configuration.getTableName(), configuration.getColumns().asProjection(),
+                selection, selectionArgs, null, null, null)
         if (cursor != null && cursor.moveToFirst()) while (cursor.moveToNext())
             resultList.add(getModelConverter().toModel(cursor))
         cursor.close()
