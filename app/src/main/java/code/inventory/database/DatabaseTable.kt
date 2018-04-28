@@ -20,8 +20,9 @@ abstract class DatabaseTable<T>(private val databaseHelper: DatabaseHelper) : Ta
         val configuration = getConfiguration()
         val cursor = database.query(configuration.getTableName(), configuration.getColumns().asProjection(),
                 selection, selectionArgs, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) while (cursor.moveToNext())
+        if (cursor != null && cursor.moveToFirst()) do
             resultList.add(getModelConverter().toModel(cursor))
+        while (cursor.moveToNext())
         cursor.close()
 
         return resultList
