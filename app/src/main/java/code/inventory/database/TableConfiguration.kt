@@ -1,14 +1,20 @@
 package code.inventory.database
 
-import code.inventory.database.Column
-
 /**
+ * Wraps information vital to Database Table
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/27/2018.
  */
 interface TableConfiguration {
 
-    fun getTableName(): String
+    /**
+     * @return name of the Table
+     */
+    fun getName(): String
 
+    /**
+     * @return List of Columns i.e., [Column.Data]
+     */
     fun getColumns(): Column.List
 }

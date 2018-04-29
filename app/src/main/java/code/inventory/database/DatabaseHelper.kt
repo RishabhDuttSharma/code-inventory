@@ -5,6 +5,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
+ * Database Helper to create and provide database perform Database Operations
+ *
+ * @param configuration database Configuration
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/26/2018.
  */
