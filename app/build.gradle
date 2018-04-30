@@ -4,14 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
 
-    compileSdkVersion 27
+    compileSdkVersion project.targetSdkVersion
 
     defaultConfig {
 
         applicationId "code.inventory"
 
-        minSdkVersion 15
-        targetSdkVersion 27
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
 
         versionCode 1
         versionName "1.0"
