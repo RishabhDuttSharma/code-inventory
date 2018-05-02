@@ -29,7 +29,7 @@ class PermissionsHelper private constructor(private val activity: Activity) {
         fun build() = permissionsHelper
     }
 
-    fun requestPermissions(requestCode: Int) {
+    fun checkRationaleAndRequestPermissions(requestCode: Int) {
         val rationalePermissions = PermissionUtils.filterRationalePermissions(activity, permissions)
         if (rationalePermissions.isNotEmpty()) callback?.showPermissionsRationale(requestCode)
         else ActivityCompat.requestPermissions(activity, permissions.toTypedArray(), requestCode)

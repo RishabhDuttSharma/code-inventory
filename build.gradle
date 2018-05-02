@@ -32,4 +32,8 @@ ext {
     targetSdkVersion = 27
 
     autolog = true
+
+    support_lib_version = '27.1.1'
+    google_play_services_version = '15.0.0'
+
 }

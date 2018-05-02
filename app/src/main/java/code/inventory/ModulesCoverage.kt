@@ -14,6 +14,6 @@ enum class ModulesCoverage(val completed: Boolean) {
     UNZIPPER(false),
     APP_UPDATER(false),
     SMS_READER(false),
-    PERMISSION_MANAGER(false),
+    PERMISSION_MANAGER(true),
     ENCRYPTION_MANAGER(false),
 }

@@ -38,7 +38,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    api "com.android.support:appcompat-v7:${project.support_lib_version}"
+    api "com.google.android.gms:play-services-vision:${project.google_play_services_version}"
+    api "com.google.android.gms:play-services-location:${project.google_play_services_version}"
+
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
     testImplementation 'junit:junit:4.12'
