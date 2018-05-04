@@ -18,8 +18,8 @@ import java.lang.Exception
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/26/2018.
  */
-class LocationProvider(private val activity: Activity,
-                       private val locationSetting: LocationSetting = LocationSetting.HIGH_ACCURACY)
+class LocationHelper(private val activity: Activity,
+                     private val locationSetting: LocationSetting = LocationSetting.HIGH_ACCURACY)
 
     : LocationCallback(), PermissionsHelper.OnRequestPermissionsCallback {
 
@@ -28,14 +28,21 @@ class LocationProvider(private val activity: Activity,
     private val mListener: Listener? = if (activity is Listener) activity else null
 
     private var mResolvingLocationError = false
+    private var mShowingPermissionsRationale = false
+    private var mLocationSettingRequestCancelled = false
 
     fun prepareTrackingLocation() =
             if (PermissionUtils.isPermissionsGranted(activity, LocationConstants.LOCATION_PERMISSIONS))
                 checkLocationSettingsAndPrepare()
             else requestLocationPermissions()
 
-    private fun requestLocationPermissions() = buildPermissionsHelper()
-            .checkRationaleAndRequestPermissions(LocationConstants.REQ_LOCATION_PERMISSION)
+    private fun requestLocationPermissions(checkRationale: Boolean = true) {
+        buildPermissionsHelper().also {
+            if (checkRationale)
+                it.checkRationaleAndRequestPermissions(LocationConstants.REQ_LOCATION_PERMISSION)
+            else it.requestPermissions(LocationConstants.REQ_LOCATION_PERMISSION)
+        }
+    }
 
     private fun buildPermissionsHelper() = PermissionsHelper.Builder(activity)
             .addPermissions(LocationConstants.LOCATION_PERMISSIONS)
@@ -72,20 +79,25 @@ class LocationProvider(private val activity: Activity,
     private fun handleLocationSettingsError(ex: Exception) {
         if ((ex as? ApiException)?.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED
                 && (ex as? ResolvableApiException) != null) {
-            if (!mResolvingLocationError) ex.startResolutionForResult(activity, LocationConstants.REQ_LOCATION_SETTINGS)
-                    .also { mResolvingLocationError = true }
+            if (!mResolvingLocationError && !mLocationSettingRequestCancelled)
+                ex.startResolutionForResult(activity, LocationConstants.REQ_LOCATION_SETTINGS)
+                        .also { mResolvingLocationError = true }
         } else displayError(ex.localizedMessage)
     }
 
+
     fun handleLocationSettingsResult(resultCode: Int) {
 
+        // Reset Location Settings flag
         mResolvingLocationError = false
 
-        when (resultCode) {
-            Activity.RESULT_CANCELED -> displayError(activity.getString(R.string.err_msg_location_cancelled))
-                    .also { stopTrackingLocation() }
-            Activity.RESULT_OK -> startTrackingLocation()
-        }
+        if (resultCode == Activity.RESULT_CANCELED) displayError(activity.getString(R.string.err_msg_location_cancelled)).also {
+            // Set Flag
+            mLocationSettingRequestCancelled = true
+            // Stop Location Updates
+            stopTrackingLocation()
+
+        } else if (resultCode == Activity.RESULT_OK) startTrackingLocation()
     }
 
     fun handleRequestPermissionsResult(requestCode: Int, grantResults: IntArray) =
@@ -95,33 +107,34 @@ class LocationProvider(private val activity: Activity,
 
     override fun onPermissionsGranted(requestCode: Int) = prepareTrackingLocation()
 
-    override fun showPermissionsRationale(requestCode: Int) = AlertDialog.Builder(activity)
-            .setTitle(R.string.dialog_title_permission_required)
-            .setMessage(R.string.dialog_message_location_rationale)
-            .setPositiveButton(android.R.string.ok, { _, _ ->
-                requestLocationPermissions()
-            }).setNegativeButton(android.R.string.cancel, null)
-            .create().show()
-
+    override fun showPermissionsRationale(requestCode: Int) {
+        if (!mShowingPermissionsRationale) AlertDialog.Builder(activity)
+                .setTitle(R.string.dialog_title_permission_required)
+                .setMessage(R.string.dialog_message_location_rationale)
+                .setPositiveButton(android.R.string.ok, { _, _ ->
+                    requestLocationPermissions(false)
+                }).setNegativeButton(android.R.string.cancel, null)
+                .setOnDismissListener { mShowingPermissionsRationale = false }
+                .create().show().also { mShowingPermissionsRationale = true }
+    }
 
     interface Listener {
 
         /**
-         * Called when LocationProvider has started fetching Location
+         * Called when LocationHelper has started fetching Location
          */
-        fun onStartedFetchingLocation()
+        fun onStartedFetchingLocation() {}
 
         /**
-         * Called when LocationProvider receives a Location Update
+         * Called when LocationHelper receives a Location Update
          *
          * @param location the most recent available Location
          */
         fun onLocationFetched(location: Location)
 
         /**
-         * Called when LocationProvider has stopped fetching Location
+         * Called when LocationHelper has stopped fetching Location
          */
-        fun onStoppedFetchingLocation()
-
+        fun onStoppedFetchingLocation() {}
     }
 }
