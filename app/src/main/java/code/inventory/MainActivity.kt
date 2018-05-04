@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if(requestCode == LocationConstants.REQ_LOCATION_PERMISSION)
-            locationProvider?.prepareTrackingLocation()
+        if (requestCode == LocationConstants.REQ_LOCATION_PERMISSION)
+            locationProvider?.handleRequestPermissionsResult(requestCode, grantResults)
     }
 }

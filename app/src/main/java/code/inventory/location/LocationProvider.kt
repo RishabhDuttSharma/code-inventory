@@ -34,10 +34,12 @@ class LocationProvider(private val activity: Activity,
                 checkLocationSettingsAndPrepare()
             else requestLocationPermissions()
 
-    private fun requestLocationPermissions() = PermissionsHelper.Builder(activity)
+    private fun requestLocationPermissions() = buildPermissionsHelper()
+            .checkRationaleAndRequestPermissions(LocationConstants.REQ_LOCATION_PERMISSION)
+
+    private fun buildPermissionsHelper() = PermissionsHelper.Builder(activity)
             .addPermissions(LocationConstants.LOCATION_PERMISSIONS)
             .setOnRequestPermissionsCallback(this).build()
-            .checkRationaleAndRequestPermissions(LocationConstants.REQ_LOCATION_PERMISSION)
 
     private fun checkLocationSettingsAndPrepare() {
 
@@ -86,9 +88,8 @@ class LocationProvider(private val activity: Activity,
         }
     }
 
-    fun handleRequestPermissionsResult(requestCode: Int, resultCode: Int) {
-
-    }
+    fun handleRequestPermissionsResult(requestCode: Int, grantResults: IntArray) =
+            buildPermissionsHelper().handleRequestPermissionsResult(requestCode, grantResults)
 
     private fun displayError(message: String) = ToastUtils.showLongMessage(activity, message)
 
