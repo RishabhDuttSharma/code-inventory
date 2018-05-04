@@ -25,4 +25,6 @@ object PermissionUtils {
     fun filterRationalePermissions(activity: Activity, permissions: List<String>) = permissions.mapNotNull {
         if (shouldShowRequestPermissionRationale(activity, it)) it else null
     }
+
+    fun hasRationalePermissions(activity: Activity, permissions: List<String>) = filterRationalePermissions(activity, permissions).isNotEmpty()
 }

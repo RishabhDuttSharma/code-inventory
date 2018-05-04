@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CodeInventory</string>
+    <string name="dialog_title_permission_required">Permission(s) Required</string>
+    <string name="dialog_message_location_rationale">Please allow "Location" permission to collect precise Geo-Location.</string>
+    <string name="err_msg_location_cancelled">Location detection cancelled!</string>
 </resources>
