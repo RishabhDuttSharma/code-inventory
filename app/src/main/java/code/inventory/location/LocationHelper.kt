@@ -92,12 +92,12 @@ class LocationHelper(private val activity: Activity,
      * Starts requesting Location Updates as told by LocationRequest
      */
     @SuppressLint("MissingPermission")
-    private fun startTrackingLocation() =
-            mLocationClient.requestLocationUpdates(prepareLocationRequest(), object : LocationCallback() {
-                override fun onLocationResult(result: LocationResult?) {
-                    if (result != null) mListener?.onLocationFetched(result.lastLocation)
-                }
-            }, null).also { mListener?.onStartedFetchingLocation() }
+    private fun startTrackingLocation() = mLocationClient.requestLocationUpdates(prepareLocationRequest(), this, null)
+            .also { mListener?.onStartedFetchingLocation() }
+
+    override fun onLocationResult(result: LocationResult?) {
+        if (result != null) mListener?.onLocationFetched(result.lastLocation)
+    }
 
     /**
      * Stops requesting Location Updates on this LocationCallback
