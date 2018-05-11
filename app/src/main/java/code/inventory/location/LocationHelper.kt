@@ -31,7 +31,7 @@ class LocationHelper(private val activity: Activity,
 
     private var mResolvingLocationError = false
     private var mShowingPermissionsRationale = false
-    private var mLocationSettingRequestCancelled = false
+    private var mLocationSettingsRequestCancelled = false
 
     /**
      * Performs checks and starts requesting Location updates
@@ -111,7 +111,7 @@ class LocationHelper(private val activity: Activity,
     private fun handleLocationSettingsError(ex: Exception) {
         if ((ex as? ApiException)?.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED
                 && (ex as? ResolvableApiException) != null) {
-            if (!mResolvingLocationError && !mLocationSettingRequestCancelled)
+            if (!mResolvingLocationError && !mLocationSettingsRequestCancelled)
                 ex.startResolutionForResult(activity, LocationConstants.REQ_LOCATION_SETTINGS)
                         .also { mResolvingLocationError = true }
         } else displayError(ex.localizedMessage)
@@ -128,7 +128,7 @@ class LocationHelper(private val activity: Activity,
 
         if (resultCode == Activity.RESULT_CANCELED) displayError(activity.getString(R.string.err_msg_location_cancelled)).also {
             // Set Flag
-            mLocationSettingRequestCancelled = true
+            mLocationSettingsRequestCancelled = true
             // Stop Location Updates
             stopTrackingLocation()
 

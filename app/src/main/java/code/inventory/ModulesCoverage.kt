@@ -11,9 +11,12 @@ enum class ModulesCoverage(val completed: Boolean) {
     AUTO_LOG(true),
     VALIDATION(true),   // 30-04-2018
     LOCATION(true),     // 04-05-2018
-    UNZIPPER(false),
+    PERMISSION_MANAGER(true),   // 02-05-2018
+    FILE_UTILS(false),
+    IMAGE_UTILS(false),
     APP_UPDATER(false),
     SMS_READER(false),
-    PERMISSION_MANAGER(true),   // 02-05-2018
+    SECURE_SHARED_PREFERENCES(false),
+    UNZIPPER(false),
     ENCRYPTION_MANAGER(false),
 }

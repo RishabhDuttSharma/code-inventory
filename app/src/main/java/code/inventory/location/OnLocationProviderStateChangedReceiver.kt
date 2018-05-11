@@ -3,7 +3,7 @@ package code.inventory.location
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
-import code.inventory.FilteredBroadcastReceiver
+import code.inventory.plugin.FilteredBroadcastReceiver
 
 /**
  * Developer: Rishabh Dutt Sharma

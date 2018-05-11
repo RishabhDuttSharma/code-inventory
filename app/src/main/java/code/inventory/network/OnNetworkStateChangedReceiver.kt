@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.CONNECTIVITY_ACTION
-import code.inventory.FilteredBroadcastReceiver
+import code.inventory.plugin.FilteredBroadcastReceiver
 
 /**
  * Use [Context.registerReceiver()] to receive NetworkStateChange Broadcasts.
