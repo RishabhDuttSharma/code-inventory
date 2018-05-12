@@ -9,7 +9,9 @@ import code.inventory.image.Quality
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */
-class ImageCompressor(quality: Quality) : ImageProcessor {
+class ImageCompressor(quality: Int) : ImageProcessor {
+
+    constructor(quality: Quality) : this(quality.quality)
 
     override fun process(bitmapProvider: BitmapProvider): Bitmap {
         TODO("implementation required")

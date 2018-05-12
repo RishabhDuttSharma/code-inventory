@@ -8,7 +8,7 @@ import code.inventory.image.ImageProcessor
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */
-class ImageRotator : ImageProcessor {
+class ImageRotator(angle: Int = 0) : ImageProcessor {
 
     override fun process(bitmapProvider: BitmapProvider): Bitmap {
         TODO("implementation required")
