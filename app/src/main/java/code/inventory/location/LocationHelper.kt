@@ -44,13 +44,18 @@ class LocationHelper(private val activity: Activity,
         }
     }
 
+    private fun buildLocationRequest() = LocationRequest.create()
+            .setInterval(locationSetting.updateInterval)
+            .setFastestInterval(locationSetting.fastestUpdateInterval)
+            .setPriority(locationSetting.priority)
+
     private fun buildPermissionsHelper() = PermissionsHelper.Builder(activity)
             .addPermissions(LocationConstants.LOCATION_PERMISSIONS)
             .setOnRequestPermissionsCallback(this).build()
 
     private fun checkLocationSettingsAndPrepare() {
 
-        val locationRequest = prepareLocationRequest()
+        val locationRequest = buildLocationRequest()
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest).build()
 
@@ -60,21 +65,19 @@ class LocationHelper(private val activity: Activity,
                 .addOnSuccessListener { startTrackingLocation() }
     }
 
-    private fun prepareLocationRequest() = LocationRequest.create()
-            .setInterval(locationSetting.updateInterval)
-            .setFastestInterval(locationSetting.fastestUpdateInterval)
-            .setPriority(locationSetting.priority)
-
     @SuppressLint("MissingPermission")
     private fun startTrackingLocation() =
-            mLocationClient.requestLocationUpdates(prepareLocationRequest(), object : LocationCallback() {
-                override fun onLocationResult(result: LocationResult?) {
-                    if (result != null) mListener?.onLocationFetched(result.lastLocation)
-                }
-            }, null).also { mListener?.onStartedFetchingLocation() }
+            mLocationClient.requestLocationUpdates(buildLocationRequest(), this, null)
+                    .also { mListener?.onStartedFetchingLocation() }
+
+
+    override fun onLocationResult(result: LocationResult?) {
+        if (result != null) mListener?.onLocationFetched(result.lastLocation)
+    }
 
     fun stopTrackingLocation(): Task<Void> = mLocationClient.removeLocationUpdates(this)
             .also { mListener?.onStoppedFetchingLocation() }
+
 
     private fun handleLocationSettingsError(ex: Exception) {
         if ((ex as? ApiException)?.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED
@@ -91,8 +94,10 @@ class LocationHelper(private val activity: Activity,
         // Reset Location Settings flag
         mResolvingLocationError = false
 
-        if (resultCode == Activity.RESULT_CANCELED) displayError(activity.getString(R.string.err_msg_location_cancelled)).also {
-            // Set Flag
+        if (resultCode == Activity.RESULT_CANCELED) {
+            // Show Location Setting request is cancelled
+            displayError(activity.getString(R.string.err_msg_location_cancelled))
+            // Set Cancellation Flag
             mLocationSettingRequestCancelled = true
             // Stop Location Updates
             stopTrackingLocation()
