@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.Task
 import java.lang.Exception
 
 /**
+ * Wraps the Functionality to provide Location Services
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/26/2018.
  */
@@ -29,13 +31,21 @@ class LocationHelper(private val activity: Activity,
 
     private var mResolvingLocationError = false
     private var mShowingPermissionsRationale = false
-    private var mLocationSettingRequestCancelled = false
+    private var mLocationSettingsRequestCancelled = false
 
+    /**
+     * Performs checks and starts requesting Location updates
+     */
     fun prepareTrackingLocation() =
             if (PermissionUtils.isPermissionsGranted(activity, LocationConstants.LOCATION_PERMISSIONS))
                 checkLocationSettingsAndPrepare()
             else requestLocationPermissions()
 
+    /**
+     * Checks permissions required for accessing User Location.
+     *
+     * @param checkRationale checks rationale if true, directly requests permissions otherwise
+     */
     private fun requestLocationPermissions(checkRationale: Boolean = true) {
         buildPermissionsHelper().also {
             if (checkRationale)
@@ -44,18 +54,22 @@ class LocationHelper(private val activity: Activity,
         }
     }
 
-    private fun buildLocationRequest() = LocationRequest.create()
-            .setInterval(locationSetting.updateInterval)
-            .setFastestInterval(locationSetting.fastestUpdateInterval)
-            .setPriority(locationSetting.priority)
-
+    /**
+     * @return a new instance of PermissionsHelper with required Permissions
+     */
     private fun buildPermissionsHelper() = PermissionsHelper.Builder(activity)
             .addPermissions(LocationConstants.LOCATION_PERMISSIONS)
             .setOnRequestPermissionsCallback(this).build()
 
+    /**
+     * Show enable Location dialog, if Location is not enabled.
+     * Callbacks are received on corresponding events.
+     *
+     * Starts Tracking Location if Location is enabled
+     */
     private fun checkLocationSettingsAndPrepare() {
 
-        val locationRequest = buildLocationRequest()
+        val locationRequest = prepareLocationRequest()
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest).build()
 
@@ -65,50 +79,73 @@ class LocationHelper(private val activity: Activity,
                 .addOnSuccessListener { startTrackingLocation() }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun startTrackingLocation() =
-            mLocationClient.requestLocationUpdates(buildLocationRequest(), this, null)
-                    .also { mListener?.onStartedFetchingLocation() }
 
+    /**
+     * @return a new instance of LocationRequest
+     */
+    private fun prepareLocationRequest() = LocationRequest.create()
+            .setInterval(locationSetting.updateInterval)
+            .setFastestInterval(locationSetting.fastestUpdateInterval)
+            .setPriority(locationSetting.priority)
+
+    /**
+     * Starts requesting Location Updates as told by LocationRequest
+     */
+    @SuppressLint("MissingPermission")
+    private fun startTrackingLocation() = mLocationClient.requestLocationUpdates(prepareLocationRequest(), this, null)
+            .also { mListener?.onStartedFetchingLocation() }
 
     override fun onLocationResult(result: LocationResult?) {
         if (result != null) mListener?.onLocationFetched(result.lastLocation)
     }
 
+    /**
+     * Stops requesting Location Updates on this LocationCallback
+     */
     fun stopTrackingLocation(): Task<Void> = mLocationClient.removeLocationUpdates(this)
             .also { mListener?.onStoppedFetchingLocation() }
 
-
+    /**
+     * Handles the Exception thrown during the User Consent for enabling the Location
+     */
     private fun handleLocationSettingsError(ex: Exception) {
         if ((ex as? ApiException)?.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED
                 && (ex as? ResolvableApiException) != null) {
-            if (!mResolvingLocationError && !mLocationSettingRequestCancelled)
+            if (!mResolvingLocationError && !mLocationSettingsRequestCancelled)
                 ex.startResolutionForResult(activity, LocationConstants.REQ_LOCATION_SETTINGS)
                         .also { mResolvingLocationError = true }
         } else displayError(ex.localizedMessage)
     }
 
 
+    /**
+     * Starts Tracking Location if user allowed Location Consent, Stops Location Tracking otherwise
+     */
     fun handleLocationSettingsResult(resultCode: Int) {
 
         // Reset Location Settings flag
         mResolvingLocationError = false
 
-        if (resultCode == Activity.RESULT_CANCELED) {
-            // Show Location Setting request is cancelled
-            displayError(activity.getString(R.string.err_msg_location_cancelled))
-            // Set Cancellation Flag
-            mLocationSettingRequestCancelled = true
+        if (resultCode == Activity.RESULT_CANCELED) displayError(activity.getString(R.string.err_msg_location_cancelled)).also {
+            // Set Flag
+            mLocationSettingsRequestCancelled = true
             // Stop Location Updates
             stopTrackingLocation()
 
         } else if (resultCode == Activity.RESULT_OK) startTrackingLocation()
     }
 
+    /**
+     * Handles the result from requesting Location Permissions
+     */
     fun handleRequestPermissionsResult(requestCode: Int, grantResults: IntArray) =
             buildPermissionsHelper().handleRequestPermissionsResult(requestCode, grantResults)
 
+    /**
+     * Shows error Toast message
+     */
     private fun displayError(message: String) = ToastUtils.showLongMessage(activity, message)
+
 
     override fun onPermissionsGranted(requestCode: Int) = prepareTrackingLocation()
 

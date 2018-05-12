@@ -1,4 +1,4 @@
-package code.inventory
+package code.inventory.plugin
 
 import android.content.BroadcastReceiver
 import android.content.Context

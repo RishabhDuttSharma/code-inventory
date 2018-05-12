@@ -24,7 +24,7 @@ object Column {
     /**
      * DataTypes supported by SQLite for a Database-Column
      */
-    enum class DataType(val value: String) {
+    enum class Type(val value: String) {
         NULL("NULL"),
         INTEGER("INTEGER"),
         REAL("REAL"),
@@ -57,7 +57,7 @@ object Column {
          *
          * @return chaining reference
          */
-        fun newColumn(columnName: String, columnDataType: DataType, vararg constraints: Constraint) =
+        fun newColumn(columnName: String, columnDataType: Type, vararg constraints: Constraint) =
                 newColumn(columnName, columnDataType.value, TextUtils.join(" ", constraints))
 
         /**
