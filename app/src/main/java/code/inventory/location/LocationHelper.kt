@@ -69,7 +69,7 @@ class LocationHelper(private val activity: Activity,
      */
     private fun checkLocationSettingsAndPrepare() {
 
-        val locationRequest = prepareLocationRequest()
+        val locationRequest = buildLocationRequest()
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest).build()
 
@@ -83,7 +83,7 @@ class LocationHelper(private val activity: Activity,
     /**
      * @return a new instance of LocationRequest
      */
-    private fun prepareLocationRequest() = LocationRequest.create()
+    private fun buildLocationRequest() = LocationRequest.create()
             .setInterval(locationSetting.updateInterval)
             .setFastestInterval(locationSetting.fastestUpdateInterval)
             .setPriority(locationSetting.priority)
@@ -92,8 +92,9 @@ class LocationHelper(private val activity: Activity,
      * Starts requesting Location Updates as told by LocationRequest
      */
     @SuppressLint("MissingPermission")
-    private fun startTrackingLocation() = mLocationClient.requestLocationUpdates(prepareLocationRequest(), this, null)
-            .also { mListener?.onStartedFetchingLocation() }
+    private fun startTrackingLocation() =
+            mLocationClient.requestLocationUpdates(buildLocationRequest(), this, null)
+                    .also { mListener?.onStartedFetchingLocation() }
 
     override fun onLocationResult(result: LocationResult?) {
         if (result != null) mListener?.onLocationFetched(result.lastLocation)
@@ -126,8 +127,10 @@ class LocationHelper(private val activity: Activity,
         // Reset Location Settings flag
         mResolvingLocationError = false
 
-        if (resultCode == Activity.RESULT_CANCELED) displayError(activity.getString(R.string.err_msg_location_cancelled)).also {
-            // Set Flag
+        if (resultCode == Activity.RESULT_CANCELED) {
+            // Show user cancellation error
+            displayError(activity.getString(R.string.err_msg_location_cancelled))
+            // Set Cancellation Flag
             mLocationSettingsRequestCancelled = true
             // Stop Location Updates
             stopTrackingLocation()
