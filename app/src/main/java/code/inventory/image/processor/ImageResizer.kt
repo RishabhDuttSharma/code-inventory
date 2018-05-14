@@ -9,11 +9,13 @@ import code.inventory.image.Resolution
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */
-class ImageResizer(width: Int, height: Int) : ImageProcessor {
+class ImageResizer(private val width: Int, private val height: Int) : ImageProcessor {
 
     constructor(resolution: Resolution) : this(resolution.width, resolution.height)
 
-    override fun process(bitmapProvider: BitmapProvider): Bitmap {
-        TODO("implementation required")
+    override fun process(bitmapProvider: BitmapProvider): Bitmap = try {
+        Bitmap.createScaledBitmap(bitmapProvider.bitmap, width, height, false)
+    } catch (ex: Throwable) {
+        throw ImageProcessor.Error(ex.localizedMessage)
     }
 }

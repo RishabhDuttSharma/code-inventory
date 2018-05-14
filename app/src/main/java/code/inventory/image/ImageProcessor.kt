@@ -17,5 +17,9 @@ interface ImageProcessor {
      *
      * @return instance of processed Bitmap
      */
+    @Throws(Error::class)
     fun process(bitmapProvider: BitmapProvider): Bitmap
+
+
+    class Error(val _message: String, _throwable: Throwable) : Throwable(_throwable)
 }
