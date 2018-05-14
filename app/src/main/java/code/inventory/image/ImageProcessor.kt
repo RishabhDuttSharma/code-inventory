@@ -21,5 +21,13 @@ interface ImageProcessor {
     fun process(bitmapProvider: BitmapProvider): Bitmap
 
 
-    class Error(val _message: String, _throwable: Throwable) : Throwable(_throwable)
+    /**
+     * Wraps the error incurred while processing Image
+     */
+    class Error(_message: String, cause: Throwable?) : Throwable(_message, cause) {
+
+        constructor(_message: String) : this(_message, null)
+
+        constructor(throwable: Throwable) : this(throwable.localizedMessage, throwable)
+    }
 }
