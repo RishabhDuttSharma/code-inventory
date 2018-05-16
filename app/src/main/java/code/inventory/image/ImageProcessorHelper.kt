@@ -40,9 +40,8 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
         return processedBitmap
     }
 
-    class Builder(source: String?) {
+    class Builder(private val bitmap: Bitmap?) {
 
-        private val bitmapProvider = BitmapProvider(source)
         private val imageProcessingQueue = LinkedBlockingQueue<ImageProcessor>()
 
         fun resize(width: Int, height: Int) = also { imageProcessingQueue.offer(ImageResizer(width, height)) }
@@ -53,7 +52,7 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
 
         fun rotate(angle: Float) = also { imageProcessingQueue.offer(ImageRotator(angle)) }
 
-        fun build() = bitmapProvider.bitmap ?: ImageProcessorHelper(bitmapProvider.bitmap
+        fun build() = ImageProcessorHelper(bitmap
                 ?: throw Exception("Image Helper: build -> bitmap is null"), imageProcessingQueue)
     }
 
