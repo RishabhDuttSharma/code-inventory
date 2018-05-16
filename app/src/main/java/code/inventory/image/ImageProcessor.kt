@@ -13,21 +13,10 @@ interface ImageProcessor {
     /**
      * Processes the Image specified by BitmapProvider
      *
-     * @param bitmapProvider provider for Bitmap
+     * @param bitmap instance of Bitmap for processing
      *
      * @return instance of processed Bitmap
      */
-    @Throws(Error::class)
-    fun process(bitmapProvider: BitmapProvider): Bitmap
-
-
-    /**
-     * Wraps the error incurred while processing Image
-     */
-    class Error(_message: String, cause: Throwable?) : Throwable(_message, cause) {
-
-        constructor(_message: String) : this(_message, null)
-
-        constructor(throwable: Throwable) : this(throwable.localizedMessage, throwable)
-    }
+    @Throws(Throwable::class)
+    fun process(bitmap: Bitmap?): Bitmap
 }

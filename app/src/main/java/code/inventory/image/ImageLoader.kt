@@ -8,6 +8,6 @@ import android.graphics.Bitmap
  */
 interface ImageLoader<T> {
 
-    @Throws(Throwable::class)
+    @Throws(Exception::class)
     fun load(source: T?): Bitmap
 }

@@ -14,13 +14,13 @@ class LocalImageLoader(private val requiredWidth: Int = 100, private val require
     override fun load(source: String?): Bitmap {
 
         if (requiredWidth <= 0)
-            throw Throwable("requiredWidth must be greater than zero")
+            throw Exception("requiredWidth must be greater than zero")
 
         if (requiredHeight <= 0)
-            throw Throwable("requiredHeight must be greater than zero")
+            throw Exception("requiredHeight must be greater than zero")
 
         if (TextUtils.isEmpty(source))
-            throw Throwable("source is null")
+            throw Exception("source is null")
 
         return ImageUtils.getSampledBitmap(source!!, requiredWidth, requiredHeight)
     }

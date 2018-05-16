@@ -29,12 +29,3 @@ enum class Quality(val quality: Int) {
     POOR(50),
     MISERABLE(30)
 }
-
-/**
- * Type of Crop Operation
- */
-enum class Crop {
-    TOP_CROP,
-    CENTER_CROP,
-    BOTTOM_CROP
-}
