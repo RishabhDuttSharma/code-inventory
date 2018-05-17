@@ -5,6 +5,11 @@ import code.inventory.image.ImageProcessor
 import code.inventory.image.Resolution
 
 /**
+ * Wraps functionality to Resize a given Image-Bitmap
+ *
+ * @param width target width of the Image-Bitmap
+ * @param height target height of the Image-Bitmap
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */
@@ -19,7 +24,7 @@ class ImageResizer(private val width: Int?, private val height: Int?) : ImagePro
         if (height == null) throw NullPointerException("ImageResizer: height is null")
 
         Bitmap.createScaledBitmap(bitmap
-                ?: throw NullPointerException("Image Resizing: bitmap is null"), width, height, false)
+                ?: throw NullPointerException("ImageResizer: bitmap is null"), width, height, false)
 
     } catch (ex: Throwable) {
         throw Exception("Error in resizing image", ex)

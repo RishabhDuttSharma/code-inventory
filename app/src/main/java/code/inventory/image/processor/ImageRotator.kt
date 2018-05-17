@@ -5,6 +5,8 @@ import android.graphics.Matrix
 import code.inventory.image.ImageProcessor
 
 /**
+ * Wraps functionality to rotate a Bitmap-Image
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */

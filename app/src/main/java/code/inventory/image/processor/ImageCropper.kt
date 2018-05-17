@@ -4,6 +4,13 @@ import android.graphics.Bitmap
 import code.inventory.image.ImageProcessor
 
 /**
+ * Wraps functionality to crop a given Bitmap-Image
+ *
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */

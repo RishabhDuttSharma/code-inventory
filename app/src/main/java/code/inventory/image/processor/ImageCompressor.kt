@@ -7,6 +7,8 @@ import code.inventory.image.Quality
 import java.io.ByteArrayOutputStream
 
 /**
+ * Wraps functionality to compress given Bitmap-Image
+ *
  * Developer: Rishabh Dutt Sharma
  * Dated: 11-May-18.
  */
