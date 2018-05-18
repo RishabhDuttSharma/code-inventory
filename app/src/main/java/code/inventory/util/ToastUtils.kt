@@ -11,7 +11,7 @@ object ToastUtils {
 
     fun showLongMessage(context: Context, message: String) = showMessage(context, message, Toast.LENGTH_LONG)
 
-    fun showMessage(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) =
+    fun showMessage(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT): Toast =
             Toast.makeText(context, message, duration).also { it.show() }
 
 }
