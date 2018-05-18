@@ -5,17 +5,18 @@ import code.inventory.image.processor.ImageCompressor
 import code.inventory.image.processor.ImageCropper
 import code.inventory.image.processor.ImageResizer
 import code.inventory.image.processor.ImageRotator
+import code.inventory.plugin.MainHandler
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 
 /**
- * Helper class to perform multiple ImageProcessing on an Image-Bitmap
+ * Helper class to perform multiple ImageProcessing on a Image-Bitmap
  *
  * Developer: Rishabh Dutt Sharma
  * Dated: 16-May-18.
  */
 class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
-                                               private val imageProcessingQueue: LinkedBlockingQueue<ImageProcessor>) {
+                                               private val builder: ImageProcessorHelper.Builder) {
 
     /**
      * Executes the Image Processing Queue asynchronously
@@ -28,10 +29,14 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
         if (listener == null) throw NullPointerException("listener cannot be null")
 
         thread {
+
+            val mainHandler = MainHandler()
+
             try {
-                listener.onProcessed(execute())
+                val processedBitmap = execute()
+                mainHandler.post { listener.onProcessed(processedBitmap) }
             } catch (ex: Throwable) {
-                listener.onError(ex)
+                mainHandler.post { listener.onError(ex) }
             }
         }
     }
@@ -43,7 +48,7 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
      */
     fun execute(): Bitmap {
         var processedBitmap: Bitmap = bitmap
-        imageProcessingQueue.forEach { imageProcessor ->
+        builder.forEach { imageProcessor ->
             processedBitmap = imageProcessor?.process(processedBitmap) ?: processedBitmap
         }
         return processedBitmap
@@ -52,9 +57,7 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
     /**
      * Builds an instance of ImageProcessorHelper
      */
-    class Builder(private val bitmap: Bitmap?) {
-
-        private val imageProcessingQueue = LinkedBlockingQueue<ImageProcessor>()
+    class Builder(private val bitmap: Bitmap?) : LinkedBlockingQueue<ImageProcessor>() {
 
         /**
          * Resize the Bitmap to given width and height
@@ -62,14 +65,14 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
          * @param width target width of bitmap
          * @param height target height of the bitmap
          */
-        fun resize(width: Int, height: Int) = also { imageProcessingQueue.offer(ImageResizer(width, height)) }
+        fun resize(width: Int, height: Int) = also { offer(ImageResizer(width, height)) }
 
         /**
          * Downgrades the quality of the Bitmap to given quality value
          *
          * @param quality target quality of bitmap
          */
-        fun compress(quality: Int) = also { imageProcessingQueue.offer(ImageCompressor(quality)) }
+        fun compress(quality: Int) = also { offer(ImageCompressor(quality)) }
 
         /**
          * Crops the bitmap with given parameters
@@ -79,20 +82,20 @@ class ImageProcessorHelper private constructor(private val bitmap: Bitmap,
          * @param width width of the crop
          * @param height height of the crop
          */
-        fun crop(x: Int, y: Int, width: Int, height: Int) = also { imageProcessingQueue.offer(ImageCropper(x, y, width, height)) }
+        fun crop(x: Int, y: Int, width: Int, height: Int) = also { offer(ImageCropper(x, y, width, height)) }
 
         /**
          * Rotates the bitmap to given angle
          *
          * @param angle the angle at the which the bitmap should be rotated
          */
-        fun rotate(angle: Float) = also { imageProcessingQueue.offer(ImageRotator(angle)) }
+        fun rotate(angle: Float) = also { offer(ImageRotator(angle)) }
 
         /**
          * @return an instance of ImageProcessorHelper as specified by Builder Parameters
          */
         fun build() = ImageProcessorHelper(bitmap
-                ?: throw Exception("Image Helper: build -> bitmap is null"), imageProcessingQueue)
+                ?: throw Exception("Image Helper: build -> bitmap is null"), this)
     }
 
     /**
