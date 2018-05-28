@@ -4,7 +4,7 @@ package code.inventory
  * Developer: Rishabh Dutt Sharma
  * Dated: 4/30/2018.
  */
-enum class ModulesCoverage(val completed: Boolean) {
+enum class ModulesCoverage(completed: Boolean) {
 
     NETWORK(true),
     DATABASE(true),

@@ -11,7 +11,6 @@ interface TableOperations<T> {
      * @param selectionArgs arguments to replace '?'
      *
      * @return the List of models
-     *
      */
     fun query(selection: String? = null, selectionArgs: Array<String>? = null): List<T>
 

@@ -1,6 +1,9 @@
 package code.inventory.database
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import code.inventory.util.CursorIterator
+import code.inventory.util.iterate
 
 /**
  * Represents Database Table
@@ -29,10 +32,13 @@ abstract class DatabaseTable<T>(private val databaseHelper: DatabaseHelper) : Ta
         val configuration = getConfiguration()
         val cursor = database.query(configuration.getName(), configuration.getColumns().asProjection(),
                 selection, selectionArgs, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) do
-            resultList.add(getModelConverter().toModel(cursor))
-        while (cursor.moveToNext())
-        cursor.close()
+
+        cursor?.iterate(object : CursorIterator {
+            override fun useCursor(cursor: Cursor) {
+                resultList.add(getModelConverter().toModel(cursor))
+            }
+        })
+        cursor?.close()
 
         return resultList
     }

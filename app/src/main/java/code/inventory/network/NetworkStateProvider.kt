@@ -6,12 +6,9 @@ import android.net.wifi.WifiManager
 import android.support.annotation.RequiresPermission
 
 /**
- * Developer: A1UGPQS2
- * [Rishabh Dutt Sharma]
- * <p/>
- * Organization: Airtel
- * [Agile Lab (KYC) - Africa]
- * <p/>
+ * Provides information about the State of the Network
+ *
+ * Developer: Rishabh Dutt Sharma
  * Dated: 4/25/2018.
  */
 object NetworkStateProvider {
@@ -52,5 +49,9 @@ object NetworkStateProvider {
     @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
     fun isInternetConnected(context: Context) = getConnectivityManager(context).activeNetworkInfo?.isConnected
 
+
+    /**
+     * @return instance of ConnectivityManager
+     */
     private fun getConnectivityManager(context: Context) = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 }
