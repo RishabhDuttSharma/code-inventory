@@ -9,7 +9,7 @@ import code.inventory.BuildConfig
  */
 object AutoLog {
 
-    private val enabled = BuildConfig.AUTOLOG_ENABLED
+    private const val enabled = BuildConfig.AUTOLOG_ENABLED
 
     private val DEFAULT_TAG = "AutoLog"
     private val DEFAULT_MESSAGE = "null"

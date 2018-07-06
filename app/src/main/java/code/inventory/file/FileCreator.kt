@@ -2,12 +2,13 @@ package code.inventory.file
 
 import android.os.Environment
 import java.io.File
+import java.io.FileOutputStream
 
 /**
  * Developer: Rishabh Dutt Sharma
  * Dated: 28-May-18.
  */
-class FileCreator private constructor(private val filePath: String?) {
+class FileCreator(private val file: File?) {
 
     class Builder {
 
@@ -31,34 +32,51 @@ class FileCreator private constructor(private val filePath: String?) {
 
         fun build(): FileCreator {
 
-            var filePath = fileName ?: System.currentTimeMillis().toString()
+            var completeFileName = fileName ?: System.currentTimeMillis().toString()
 
             if (prefix != null)
-                filePath = "${prefix}_$filePath"
+                completeFileName = "${prefix}_$completeFileName"
 
             if (suffix != null)
-                filePath += "_$suffix"
+                completeFileName += "_$suffix"
 
             if (extension != null)
-                filePath += ".$extension"
+                completeFileName += ".$extension"
 
             directory = directory ?: Environment.getExternalStorageDirectory().absolutePath
 
-            return FileCreator("$directory${File.separator}$filePath")
+            return FileCreator(File(directory, completeFileName))
         }
     }
 
+
+    /**
+     * Creates a new File, if either file doesn't exists or overwrite flag is true
+     *
+     * @param overwrite overwrites the given file with a new empty file, if exists
+     *
+     * @throws NullPointerException, if either filePath is null or overwrite flag is null
+     */
     @Throws(NullPointerException::class)
     fun create(overwrite: Boolean? = true): File {
 
-        if (filePath == null) throw NullPointerException("file path is null")
+        if (file == null) throw NullPointerException("file path is null")
 
         if (overwrite == null) throw NullPointerException("overwrite flag is null")
-
-        val file = File(filePath)
 
         if (file.exists() && overwrite) file.delete()
 
         return file.also { it.createNewFile() }
+    }
+
+    /**
+     * Writes given data (byteArray) to file
+     */
+    fun write(byteArray: ByteArray) {
+
+
+        val outStream = FileOutputStream(file)
+
+
     }
 }
